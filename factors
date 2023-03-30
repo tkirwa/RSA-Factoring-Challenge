@@ -1,31 +1,30 @@
 #!/usr/bin/env python3
 
 import sys
-import math
+import time
 
 def factorize(n):
-    """
-    Factorize a given number n into two smaller factors.
-    Returns None if n is prime or a negative number.
-    """
-    if n <= 1:
-        return None
-    for i in range(2, int(math.sqrt(n)) + 1):
+    for i in range(2, int(n ** 0.5) + 1):
         if n % i == 0:
-            return (i, n // i)
+            return i, n // i
     return None
 
-def main():
-    if len(sys.argv) != 2:
-        print("Usage: factors <file>")
-        return
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print('Usage: factors <file>')
+        sys.exit(1)
+
     filename = sys.argv[1]
     with open(filename) as f:
         for line in f:
             n = int(line.strip())
+            start_time = time.monotonic()
             factors = factorize(n)
-            if factors is not None:
-                print("{}={}*{}".format(n, factors[0], factors[1]))
-
-if __name__ == "__main__":
-    main()
+            elapsed_time = time.monotonic() - start_time
+            if factors:
+                p, q = factors
+                print(f'{n}={p}*{q}')
+            else:
+                print(f'Could not factorize {n}')
+            if elapsed_time > 5:
+                print(f'Warning: took {elapsed_time:.2f} seconds to factorize {n}, which is longer than the time limit of 5 seconds.')
